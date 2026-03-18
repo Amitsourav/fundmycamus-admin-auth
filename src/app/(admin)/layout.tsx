@@ -1,21 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isAdmin, isLoading, signOut } = useAuth();
-  const router = useRouter();
+  const { isAdmin, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !isAdmin) {
-      signOut();
-      router.push("/login");
+      window.location.href = "/login";
     }
-  }, [isLoading, isAdmin, signOut, router]);
+  }, [isLoading, isAdmin]);
 
   if (isLoading) {
     return (

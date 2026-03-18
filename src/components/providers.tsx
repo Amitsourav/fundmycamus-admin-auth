@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { AuthContext } from "@/hooks/use-auth";
-import { api } from "@/lib/api-client";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -37,7 +38,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleSignOut = useCallback(async () => {
-    await authClient.signOut();
+    try {
+      await authClient.signOut();
+    } catch {
+      // Sign out API may fail — clear local state anyway
+    }
     setUser(null);
     setIsAdmin(false);
     window.location.href = "/login";
@@ -59,14 +64,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
           const u = session.data.user;
           setUser({ id: u.id, email: u.email, name: u.name });
 
-          // Check admin role
-          try {
-            const profile = await api.get<{ role: string }>(
-              `/api/v1/users/${u.id}`
-            );
-            setIsAdmin(profile.role === "admin");
-          } catch {
-            setIsAdmin(false);
+          // Check admin role from Better Auth session or API
+          const role = (u as Record<string, unknown>).role as string | undefined;
+          if (role) {
+            setIsAdmin(role === "admin");
+          } else {
+            // Fallback: check via API
+            try {
+              const res = await fetch(`${API_URL}/api/v1/users/${u.id}`, {
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+              });
+              if (res.ok) {
+                const profile = await res.json() as { role: string };
+                setIsAdmin(profile.role === "admin");
+              } else {
+                setIsAdmin(false);
+              }
+            } catch {
+              setIsAdmin(false);
+            }
           }
         } else {
           setUser(null);

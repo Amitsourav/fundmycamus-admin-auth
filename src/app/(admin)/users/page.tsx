@@ -2,39 +2,28 @@
 
 import { useState } from "react";
 import { useUsers } from "@/hooks/queries/use-users";
-import { useUpdateUserRole } from "@/hooks/mutations/use-update-user-role";
 import { PageHeader } from "@/components/shared/page-header";
-import { StatusBadge } from "@/components/shared/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { USER_ROLE_OPTIONS } from "@/lib/constants";
 import { formatDate } from "@/lib/utils";
-import { toast } from "sonner";
+import { Eye } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Profile } from "@/types/user";
 
 export default function UsersPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("");
-  const [roleDialog, setRoleDialog] = useState<{ open: boolean; user?: Profile; newRole: string }>({
-    open: false,
-    newRole: "",
-  });
+  const [viewUser, setViewUser] = useState<Profile | null>(null);
 
   const { data, isLoading } = useUsers({
     page,
     page_size: 25,
-    role: roleFilter || undefined,
     search: search || undefined,
   });
-
-  const updateRole = useUpdateUserRole();
 
   const columns: ColumnDef<Profile>[] = [
     {
@@ -49,9 +38,9 @@ export default function UsersPage() {
       cell: ({ row }) => row.original.phone || "—",
     },
     {
-      accessorKey: "role",
-      header: "Role",
-      cell: ({ row }) => <StatusBadge status={row.original.role} />,
+      accessorKey: "country",
+      header: "Country",
+      cell: ({ row }) => row.original.country || "—",
     },
     {
       accessorKey: "contact_consent",
@@ -78,33 +67,13 @@ export default function UsersPage() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() =>
-            setRoleDialog({
-              open: true,
-              user: row.original,
-              newRole: row.original.role,
-            })
-          }
+          onClick={() => setViewUser(row.original)}
         >
-          Change Role
+          <Eye className="h-4 w-4" />
         </Button>
       ),
     },
   ];
-
-  async function handleRoleUpdate() {
-    if (!roleDialog.user) return;
-    try {
-      await updateRole.mutateAsync({
-        userId: roleDialog.user.id,
-        role: roleDialog.newRole,
-      });
-      toast.success("Role updated successfully");
-      setRoleDialog({ open: false, newRole: "" });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update role");
-    }
-  }
 
   if (isLoading) {
     return (
@@ -129,25 +98,6 @@ export default function UsersPage() {
           }}
           className="max-w-sm"
         />
-        <Select
-          value={roleFilter}
-          onValueChange={(value) => {
-            setRoleFilter(value === "all" ? "" : value);
-            setPage(1);
-          }}
-        >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="All Roles" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Roles</SelectItem>
-            {USER_ROLE_OPTIONS.map((role) => (
-              <SelectItem key={role} value={role}>
-                {role.charAt(0).toUpperCase() + role.slice(1)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       <DataTable columns={columns} data={data?.items || []} />
@@ -178,40 +128,52 @@ export default function UsersPage() {
         </div>
       )}
 
-      <Dialog
-        open={roleDialog.open}
-        onOpenChange={(open) => setRoleDialog({ ...roleDialog, open })}
-      >
-        <DialogContent>
+      <Dialog open={!!viewUser} onOpenChange={() => setViewUser(null)}>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Change User Role</DialogTitle>
-            <DialogDescription>
-              Update role for {roleDialog.user?.full_name || roleDialog.user?.email}
-            </DialogDescription>
+            <DialogTitle>{viewUser?.full_name || "Student Profile"}</DialogTitle>
+            <DialogDescription>{viewUser?.email}</DialogDescription>
           </DialogHeader>
-          <Select
-            value={roleDialog.newRole}
-            onValueChange={(value) => setRoleDialog({ ...roleDialog, newRole: value })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {USER_ROLE_OPTIONS.map((role) => (
-                <SelectItem key={role} value={role}>
-                  {role.charAt(0).toUpperCase() + role.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRoleDialog({ open: false, newRole: "" })}>
-              Cancel
-            </Button>
-            <Button onClick={handleRoleUpdate} disabled={updateRole.isPending}>
-              {updateRole.isPending ? "Updating..." : "Update Role"}
-            </Button>
-          </DialogFooter>
+          {viewUser && (
+            <div className="grid gap-3 text-sm">
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Phone</span>
+                <span>{viewUser.phone || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Gender</span>
+                <span>{viewUser.gender || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Date of Birth</span>
+                <span>{viewUser.date_of_birth ? formatDate(viewUser.date_of_birth) : "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Country</span>
+                <span>{viewUser.country || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">City</span>
+                <span>{viewUser.city || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Profile</span>
+                <span>{viewUser.profile_completion_pct}% complete</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Consent</span>
+                <span>{viewUser.contact_consent ? "Yes" : "No"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Referral Code</span>
+                <span className="font-mono">{viewUser.referral_code}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Joined</span>
+                <span>{formatDate(viewUser.created_at)}</span>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

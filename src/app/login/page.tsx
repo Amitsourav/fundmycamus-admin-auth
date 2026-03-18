@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { api } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +13,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -27,24 +24,36 @@ export default function LoginPage() {
         password,
       });
 
-      if (error) {
-        toast.error(error.message || "Login failed");
+      if (error || !data?.user) {
+        toast.error(error?.message || "Login failed. Check credentials or CORS configuration.");
         return;
       }
 
-      // Check if user is admin
-      const profile = await api.get<{ role: string }>(
-        `/api/v1/users/${data?.user?.id}`
-      );
-
-      if (profile.role !== "admin") {
-        await authClient.signOut();
-        toast.error("Access denied. Admin privileges required.");
+      // Verify session was actually established (cookies stored)
+      const session = await authClient.getSession();
+      if (!session?.data?.user) {
+        toast.error("Session could not be established. Please try again.");
         return;
+      }
+
+      // Check admin role
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
+      const res = await fetch(`${API_URL}/api/v1/users/${data.user.id}`, {
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const profile = await res.json() as { role: string };
+        if (profile.role !== "admin") {
+          await authClient.signOut().catch(() => {});
+          toast.error("Access denied. Admin privileges required.");
+          return;
+        }
       }
 
       toast.success("Welcome back!");
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Login failed. Please try again.");
     } finally {

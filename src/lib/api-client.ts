@@ -1,11 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  if (response.status === 401) {
-    window.location.href = "/login";
-    throw new Error("Unauthorized");
-  }
-
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: "Request failed" }));
     throw new Error(error.error || error.detail || `HTTP ${response.status}`);
