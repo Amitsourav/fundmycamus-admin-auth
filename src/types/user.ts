@@ -1,0 +1,34 @@
+export interface Profile {
+  id: string;
+  email: string;
+  full_name?: string;
+  phone?: string;
+  phone_verified: boolean;
+  is_whatsapp: boolean;
+  date_of_birth?: string;
+  gender?: string;
+  marital_status?: string;
+  passport_number?: string;
+  pan_number?: string;
+  mother_maiden_name?: string;
+  about?: string;
+  avatar_url?: string;
+  avatar_type: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  district?: string;
+  state?: string;
+  country: string;
+  zip_code?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  instagram_url?: string;
+  contact_consent: boolean;
+  profile_completion_pct: number;
+  role: string;
+  referral_code: string;
+  referred_by?: string;
+  created_at: string;
+  updated_at: string;
+}
