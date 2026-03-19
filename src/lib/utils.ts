@@ -67,7 +67,23 @@ export function statusColor(status: string): string {
   return colors[status] || "bg-gray-100 text-gray-700";
 }
 
+const DISPLAY_NAMES: Record<string, string> = {
+  marksheet_10th: "10th Marksheet",
+  marksheet_12th: "12th Marksheet",
+  graduation_certificate: "Graduation Certificate",
+  pg_certificate: "PG Certificate",
+  diploma_certificate: "Diploma",
+  mba_certificate: "MBA",
+  ca_cma_certificate: "CA / CMA",
+  btech_be_certificate: "B.Tech / BE",
+  itr: "ITR",
+  pan_card: "PAN Card",
+  sop: "SOP",
+  lor: "LOR",
+};
+
 export function formatStatus(status: string): string {
+  if (DISPLAY_NAMES[status]) return DISPLAY_NAMES[status];
   return status
     .split("_")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
