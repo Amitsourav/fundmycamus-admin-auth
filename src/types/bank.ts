@@ -22,6 +22,16 @@ export interface Bank {
   display_order: number;
 }
 
+export interface LoanBank {
+  id: string;
+  loan_application_id: string;
+  bank_name: string;
+  status: string;
+  remarks?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BankOffer {
   id: string;
   loan_application_id: string;

@@ -53,8 +53,21 @@ export default function UsersPage() {
     },
     {
       accessorKey: "profile_completion_pct",
-      header: "Profile %",
-      cell: ({ row }) => `${row.original.profile_completion_pct}%`,
+      header: "Profile",
+      cell: ({ row }) => {
+        const pct = row.original.profile_completion_pct;
+        return (
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-16 rounded-full bg-muted overflow-hidden">
+              <div
+                className={`h-full rounded-full ${pct >= 80 ? "bg-green-500" : pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <span className="text-xs text-muted-foreground">{pct}%</span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "created_at",
@@ -158,7 +171,15 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <span className="text-muted-foreground">Profile</span>
-                <span>{viewUser.profile_completion_pct}% complete</span>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-20 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${viewUser.profile_completion_pct >= 80 ? "bg-green-500" : viewUser.profile_completion_pct >= 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                      style={{ width: `${viewUser.profile_completion_pct}%` }}
+                    />
+                  </div>
+                  <span className="text-xs">{viewUser.profile_completion_pct}%</span>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <span className="text-muted-foreground">Consent</span>
