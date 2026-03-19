@@ -66,11 +66,9 @@ export const ContactStatus = {
 
 export const ReferralStatus = {
   SIGNED_UP: "signed_up",
-  APPLIED: "applied",
-  SANCTIONED: "sanctioned",
-  DISBURSED: "disbursed",
-  PAID: "paid",
-  EXPIRED: "expired",
+  LOAN_APPLIED: "loan_applied",
+  LOAN_SANCTIONED: "loan_sanctioned",
+  LOAN_DISBURSED: "loan_disbursed",
 } as const;
 
 export const PayoutStatus = {

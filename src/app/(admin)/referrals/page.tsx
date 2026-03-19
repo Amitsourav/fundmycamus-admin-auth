@@ -89,9 +89,9 @@ export default function ReferralsPage() {
       id: "actions",
       cell: ({ row }) => {
         const nextActions: Record<string, string> = {
-          signed_up: "applied",
-          applied: "sanctioned",
-          sanctioned: "disbursed",
+          signed_up: "loan_applied",
+          loan_applied: "loan_sanctioned",
+          loan_sanctioned: "loan_disbursed",
         };
         const nextAction = nextActions[row.original.status];
         if (!nextAction) return null;
@@ -252,6 +252,19 @@ export default function ReferralsPage() {
               Move referral {processDialog.referral?.referral_code} to &quot;{formatStatus(processDialog.action)}&quot;?
             </DialogDescription>
           </DialogHeader>
+          {processDialog.action === "loan_sanctioned" && (
+            <div className="rounded-md bg-green-50 p-3 text-sm text-green-800">
+              This will trigger a payout of <strong>&#8377;1,000</strong> to the referrer.
+            </div>
+          )}
+          {processDialog.action === "loan_disbursed" && (
+            <div className="rounded-md bg-green-50 p-3 text-sm text-green-800 space-y-1">
+              <p>This will trigger payouts:</p>
+              <p>&#8226; <strong>&#8377;1,000</strong> to the referrer</p>
+              <p>&#8226; <strong>&#8377;1,000</strong> to the friend (referee)</p>
+              <p className="text-xs text-green-600">Every 10th disbursement adds a &#8377;5,000 bonus.</p>
+            </div>
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setProcessDialog({ open: false, action: "" })}>
               Cancel
