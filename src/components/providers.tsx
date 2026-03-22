@@ -67,7 +67,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           // Check admin role from Better Auth session or API
           const role = (u as Record<string, unknown>).role as string | undefined;
           if (role) {
-            setIsAdmin(role === "admin");
+            setIsAdmin(role === "admin" || role === "counselor");
           } else {
             // Fallback: check via API
             try {
@@ -77,7 +77,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               });
               if (res.ok) {
                 const profile = await res.json() as { role: string };
-                setIsAdmin(profile.role === "admin");
+                setIsAdmin(profile.role === "admin" || profile.role === "counselor");
               } else {
                 setIsAdmin(false);
               }

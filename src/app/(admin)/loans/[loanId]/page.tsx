@@ -24,7 +24,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { VALID_LOAN_TRANSITIONS, LoanStatus } from "@/lib/constants";
+import { VALID_LOAN_TRANSITIONS, LoanStatus, BANK_STATUS_OPTIONS } from "@/lib/constants";
 import { formatCurrency, formatDate, formatStatus } from "@/lib/utils";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, Eye, Download, CheckCircle, XCircle } from "lucide-react";
@@ -35,16 +35,6 @@ import type { Document } from "@/types/document";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787";
 
 const LOAN_STATUS_VALUES = Object.values(LoanStatus);
-const BANK_STATUS_VALUES = [
-  "applied",
-  "docs_received",
-  "under_review",
-  "loan_login",
-  "sanction",
-  "processing_fee",
-  "disbursed",
-  "rejected",
-];
 
 function getDocFileUrl(docId: string) {
   return `${API_URL}/api/v1/documents/${docId}/file`;
@@ -538,7 +528,7 @@ export default function LoanDetailPage() {
             <Select value={editBankStatus} onValueChange={setEditBankStatus}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {BANK_STATUS_VALUES.map((status) => (
+                {BANK_STATUS_OPTIONS.map((status) => (
                   <SelectItem key={status} value={status}>{formatStatus(status)}</SelectItem>
                 ))}
               </SelectContent>

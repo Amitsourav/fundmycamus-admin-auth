@@ -1,4 +1,5 @@
 export const LoanStatus = {
+  DRAFT: "draft",
   APPLIED: "applied",
   DOCS_RECEIVED: "docs_received",
   UNDER_REVIEW: "under_review",
@@ -11,6 +12,7 @@ export const LoanStatus = {
 } as const;
 
 export const VALID_LOAN_TRANSITIONS: Record<string, string[]> = {
+  [LoanStatus.DRAFT]: [LoanStatus.APPLIED, LoanStatus.WITHDRAWN],
   [LoanStatus.APPLIED]: [LoanStatus.DOCS_RECEIVED, LoanStatus.REJECTED, LoanStatus.WITHDRAWN],
   [LoanStatus.DOCS_RECEIVED]: [LoanStatus.UNDER_REVIEW, LoanStatus.REJECTED, LoanStatus.WITHDRAWN],
   [LoanStatus.UNDER_REVIEW]: [LoanStatus.LOAN_LOGIN, LoanStatus.REJECTED, LoanStatus.WITHDRAWN],
@@ -66,9 +68,9 @@ export const ContactStatus = {
 
 export const ReferralStatus = {
   SIGNED_UP: "signed_up",
-  LOAN_APPLIED: "loan_applied",
-  LOAN_SANCTIONED: "loan_sanctioned",
-  LOAN_DISBURSED: "loan_disbursed",
+  APPLIED: "applied",
+  SANCTIONED: "sanctioned",
+  DISBURSED: "disbursed",
 } as const;
 
 export const PayoutStatus = {
@@ -98,6 +100,10 @@ export const BankOfferStatus = {
 } as const;
 
 export const LOAN_STATUS_OPTIONS = Object.values(LoanStatus);
+export const BANK_STATUS_OPTIONS = [
+  "applied", "docs_received", "under_review", "loan_login",
+  "sanction", "processing_fee", "disbursed", "rejected",
+] as const;
 export const DOCUMENT_STATUS_OPTIONS = Object.values(DocumentStatus);
 export const CONTACT_STATUS_OPTIONS = Object.values(ContactStatus);
 export const PAYOUT_STATUS_OPTIONS = Object.values(PayoutStatus);

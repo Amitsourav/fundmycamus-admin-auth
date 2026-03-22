@@ -28,7 +28,7 @@ import {
 import { DOCUMENT_STATUS_OPTIONS } from "@/lib/constants";
 import { formatDate, formatStatus } from "@/lib/utils";
 import { toast } from "sonner";
-import { Eye, CheckCircle, XCircle, Download, ChevronDown, ChevronRight, User, Search } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Download, ChevronDown, ChevronRight, User, Search, Clock } from "lucide-react";
 import { api } from "@/lib/api-client";
 import type { Document } from "@/types/document";
 import type { Profile } from "@/types/user";
@@ -148,7 +148,7 @@ export default function DocumentsPage() {
   const [reviewDialog, setReviewDialog] = useState<{
     open: boolean;
     doc?: Document;
-    action: "verified" | "rejected";
+    action: "under_review" | "verified" | "rejected";
   }>({ open: false, action: "verified" });
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -339,12 +339,27 @@ export default function DocumentsPage() {
                                   <Button variant="ghost" size="sm" onClick={() => downloadFile(doc.id, doc.file_name)}>
                                     <Download className="h-4 w-4" />
                                   </Button>
+                                  {doc.status === "pending_review" && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-blue-600"
+                                      title="Mark as Under Review"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setReviewDialog({ open: true, doc, action: "under_review" });
+                                      }}
+                                    >
+                                      <Clock className="h-4 w-4" />
+                                    </Button>
+                                  )}
                                   {(doc.status === "pending_review" || doc.status === "under_review") && (
                                     <>
                                       <Button
                                         variant="ghost"
                                         size="sm"
                                         className="text-green-600"
+                                        title="Approve"
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           setReviewDialog({ open: true, doc, action: "verified" });
@@ -356,6 +371,7 @@ export default function DocumentsPage() {
                                         variant="ghost"
                                         size="sm"
                                         className="text-red-600"
+                                        title="Reject"
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           setReviewDialog({ open: true, doc, action: "rejected" });
@@ -405,7 +421,7 @@ export default function DocumentsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {reviewDialog.action === "verified" ? "Approve" : "Reject"} Document
+              {reviewDialog.action === "verified" ? "Approve" : reviewDialog.action === "under_review" ? "Mark Under Review" : "Reject"} Document
             </DialogTitle>
             <DialogDescription>{reviewDialog.doc?.file_name}</DialogDescription>
           </DialogHeader>
@@ -432,6 +448,8 @@ export default function DocumentsPage() {
                 ? "Processing..."
                 : reviewDialog.action === "verified"
                 ? "Approve"
+                : reviewDialog.action === "under_review"
+                ? "Mark Under Review"
                 : "Reject"}
             </Button>
           </DialogFooter>

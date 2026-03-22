@@ -9,7 +9,7 @@ export function useCreateCounselor() {
 
   return useMutation({
     mutationFn: (data: CounselorCreate) =>
-      api.post<Counselor>("/api/v1/counselors", data),
+      api.post<Counselor & { temp_password?: string }>("/api/v1/counselors", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["counselors"] });
     },

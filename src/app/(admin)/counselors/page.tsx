@@ -33,6 +33,12 @@ export default function CounselorsPage() {
     open: boolean;
     counselor?: Counselor;
   }>({ open: false });
+  const [tempPasswordDialog, setTempPasswordDialog] = useState<{
+    open: boolean;
+    name: string;
+    email: string;
+    password: string;
+  }>({ open: false, name: "", email: "", password: "" });
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -98,7 +104,7 @@ export default function CounselorsPage() {
         });
         toast.success("Counselor updated");
       } else {
-        await createCounselor.mutateAsync({
+        const result = await createCounselor.mutateAsync({
           name: form.name,
           email: form.email,
           title: form.title || undefined,
@@ -108,7 +114,18 @@ export default function CounselorsPage() {
           max_active_cases: form.max_active_cases,
           specializations,
         });
-        toast.success("Counselor created");
+        setFormDialog({ open: false });
+        if (result.temp_password) {
+          setTempPasswordDialog({
+            open: true,
+            name: form.name,
+            email: form.email,
+            password: result.temp_password,
+          });
+        } else {
+          toast.success("Counselor created");
+        }
+        return;
       }
       setFormDialog({ open: false });
     } catch (err) {
@@ -243,6 +260,45 @@ export default function CounselorsPage() {
                 : formDialog.counselor
                 ? "Update"
                 : "Create"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Temp Password Dialog */}
+      <Dialog open={tempPasswordDialog.open} onOpenChange={(open) => setTempPasswordDialog({ ...tempPasswordDialog, open })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Counselor Created!</DialogTitle>
+            <DialogDescription>
+              Share these credentials with {tempPasswordDialog.name} to log in to the admin panel.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-md bg-muted p-4 space-y-3">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Email</span>
+              <span className="font-medium">{tempPasswordDialog.email}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Temporary Password</span>
+              <span className="font-mono font-bold text-lg">{tempPasswordDialog.password}</span>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            This password is shown only once. Make sure to copy it now.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(tempPasswordDialog.password);
+                toast.success("Password copied to clipboard");
+              }}
+            >
+              Copy Password
+            </Button>
+            <Button onClick={() => setTempPasswordDialog({ open: false, name: "", email: "", password: "" })}>
+              Done
             </Button>
           </DialogFooter>
         </DialogContent>

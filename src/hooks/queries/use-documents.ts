@@ -11,12 +11,3 @@ export function useDocumentsForReview(status?: string) {
       api.get<Document[]>("/api/v1/documents/review", { status }),
   });
 }
-
-export function useUserDocuments(userId: string) {
-  return useQuery({
-    queryKey: ["documents", "user", userId],
-    queryFn: () =>
-      api.get<Document[]>("/api/v1/documents/review", { user_id: userId }),
-    enabled: !!userId,
-  });
-}

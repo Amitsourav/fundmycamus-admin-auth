@@ -148,10 +148,14 @@ export default function UsersPage() {
             <DialogDescription>{viewUser?.email}</DialogDescription>
           </DialogHeader>
           {viewUser && (
-            <div className="grid gap-3 text-sm">
+            <div className="grid gap-3 text-sm max-h-[60vh] overflow-auto">
               <div className="grid grid-cols-2 gap-2">
                 <span className="text-muted-foreground">Phone</span>
-                <span>{viewUser.phone || "—"}</span>
+                <span>{viewUser.phone || "—"} {viewUser.phone_verified ? "(Verified)" : ""}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">WhatsApp</span>
+                <span>{viewUser.is_whatsapp ? "Yes" : "No"}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <span className="text-muted-foreground">Gender</span>
@@ -162,13 +166,43 @@ export default function UsersPage() {
                 <span>{viewUser.date_of_birth ? formatDate(viewUser.date_of_birth) : "—"}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Marital Status</span>
+                <span>{viewUser.marital_status || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Passport</span>
+                <span>{viewUser.passport_number || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">PAN</span>
+                <span>{viewUser.pan_number || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">Address</span>
+                <span>{[viewUser.address_line1, viewUser.address_line2].filter(Boolean).join(", ") || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">City / District</span>
+                <span>{[viewUser.city, viewUser.district].filter(Boolean).join(", ") || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-muted-foreground">State</span>
+                <span>{viewUser.state || "—"}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
                 <span className="text-muted-foreground">Country</span>
                 <span>{viewUser.country || "—"}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <span className="text-muted-foreground">City</span>
-                <span>{viewUser.city || "—"}</span>
+                <span className="text-muted-foreground">ZIP</span>
+                <span>{viewUser.zip_code || "—"}</span>
               </div>
+              {viewUser.linkedin_url && (
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="text-muted-foreground">LinkedIn</span>
+                  <span className="truncate">{viewUser.linkedin_url}</span>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-2">
                 <span className="text-muted-foreground">Profile</span>
                 <div className="flex items-center gap-2">

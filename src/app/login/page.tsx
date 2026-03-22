@@ -45,9 +45,9 @@ export default function LoginPage() {
 
       if (res.ok) {
         const profile = await res.json() as { role: string };
-        if (profile.role !== "admin") {
+        if (profile.role !== "admin" && profile.role !== "counselor") {
           await authClient.signOut().catch(() => {});
-          toast.error("Access denied. Admin privileges required.");
+          toast.error("Access denied. Admin or counselor privileges required.");
           return;
         }
       }
