@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUnreadCount } from "@/hooks/queries/use-chat";
 import {
   LayoutDashboard,
   Users,
@@ -14,6 +15,7 @@ import {
   MessageSquare,
   Bell,
   GraduationCap,
+  MessageCircle,
 } from "lucide-react";
 
 const navItems = [
@@ -22,6 +24,7 @@ const navItems = [
   { title: "Loans", href: "/loans", icon: FileText },
   { title: "Documents", href: "/documents", icon: FolderOpen },
   { title: "Counselors", href: "/counselors", icon: UserCog },
+  { title: "Chat", href: "/chat", icon: MessageCircle, badge: true },
   { title: "Referrals", href: "/referrals", icon: Share2 },
   { title: "Contacts", href: "/contacts", icon: MessageSquare },
   { title: "Notifications", href: "/notifications", icon: Bell },
@@ -29,6 +32,8 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: unreadData } = useUnreadCount();
+  const unreadCount = unreadData?.count || 0;
 
   return (
     <div className="hidden border-r bg-background md:block md:w-64">
@@ -53,7 +58,12 @@ export function Sidebar() {
                 )}
               >
                 <item.icon className="h-4 w-4" />
-                {item.title}
+                <span className="flex-1">{item.title}</span>
+                {item.badge && unreadCount > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>
