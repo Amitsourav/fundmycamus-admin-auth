@@ -15,6 +15,6 @@ export interface Document {
 }
 
 export interface DocumentReview {
-  status: "verified" | "rejected";
+  status: "under_review" | "verified" | "rejected";
   rejection_reason?: string;
 }
