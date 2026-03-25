@@ -42,7 +42,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Dashboard" />
+        <PageHeader title="Dashboard" description="Overview of FundMyCampus operations" />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 10 }).map((_, i) => (
             <Skeleton key={i} className="h-28" />

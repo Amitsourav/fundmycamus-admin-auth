@@ -47,4 +47,13 @@ export const api = {
     });
     return handleResponse<T>(response);
   },
+
+  async delete<T>(path: string): Promise<T> {
+    const response = await fetch(`${API_URL}${path}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    return handleResponse<T>(response);
+  },
 };

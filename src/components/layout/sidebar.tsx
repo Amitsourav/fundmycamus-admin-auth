@@ -16,6 +16,8 @@ import {
   Bell,
   GraduationCap,
   MessageCircle,
+  HelpCircle,
+  UserSearch,
 } from "lucide-react";
 
 const navItems = [
@@ -25,6 +27,8 @@ const navItems = [
   { title: "Documents", href: "/documents", icon: FolderOpen },
   { title: "Counselors", href: "/counselors", icon: UserCog },
   { title: "Chat", href: "/chat", icon: MessageCircle, badge: true },
+  { title: "FAQ Management", href: "/faqs", icon: HelpCircle },
+  { title: "Guest Leads", href: "/guest-chats", icon: UserSearch },
   { title: "Referrals", href: "/referrals", icon: Share2 },
   { title: "Contacts", href: "/contacts", icon: MessageSquare },
   { title: "Notifications", href: "/notifications", icon: Bell },
