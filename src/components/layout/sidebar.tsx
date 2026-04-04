@@ -18,6 +18,7 @@ import {
   MessageCircle,
   HelpCircle,
   UserSearch,
+  Megaphone,
 } from "lucide-react";
 
 const navItems = [
@@ -29,6 +30,7 @@ const navItems = [
   { title: "Chat", href: "/chat", icon: MessageCircle, badge: true },
   { title: "FAQ Management", href: "/faqs", icon: HelpCircle },
   { title: "Guest Leads", href: "/guest-chats", icon: UserSearch },
+  { title: "Landing Leads", href: "/landing-leads", icon: Megaphone },
   { title: "Referrals", href: "/referrals", icon: Share2 },
   { title: "Contacts", href: "/contacts", icon: MessageSquare },
   { title: "Notifications", href: "/notifications", icon: Bell },
