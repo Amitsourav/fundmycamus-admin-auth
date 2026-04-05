@@ -12,6 +12,13 @@ import { Megaphone } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { LandingLead } from "@/types/landing-lead";
 
+const LOAN_STATUS_LABELS: Record<string, string> = {
+  need_loan: "Need Loan",
+  already_taken: "Already Taken",
+  awaiting_calls: "Awaiting Calls",
+  self_funding: "Self Funding",
+};
+
 export default function LandingLeadsPage() {
   const [page, setPage] = useState(1);
 
@@ -40,6 +47,24 @@ export default function LandingLeadsPage() {
       cell: ({ row }) => (
         <Badge variant="secondary">
           {row.original.source.replace(/_/g, " ")}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "loan_status",
+      header: "Loan Status",
+      cell: ({ row }) => (
+        <Badge variant="outline">
+          {LOAN_STATUS_LABELS[row.original.loan_status] || row.original.loan_status}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "consent",
+      header: "Consent",
+      cell: ({ row }) => (
+        <Badge variant={row.original.consent ? "default" : "secondary"}>
+          {row.original.consent ? "Yes" : "No"}
         </Badge>
       ),
     },

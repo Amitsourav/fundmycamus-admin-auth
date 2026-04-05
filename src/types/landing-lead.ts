@@ -4,6 +4,8 @@ export interface LandingLead {
   email: string;
   phone: string;
   source: string;
+  loan_status: string;
+  consent: boolean;
   created_at: string;
 }
 
